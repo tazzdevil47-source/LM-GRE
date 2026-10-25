@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#0d1120">
+  <meta name="color-scheme" content="dark">
+  <meta name="description" content="LM GRE App: an offline-first GRE vocabulary and quantitative reasoning training PWA with 1,000 source-grounded words, ten-page chapters, flashcards, exams and two-minute sprints.">
+  <link rel="manifest" href="./manifest.webmanifest">
+  <link rel="icon" type="image/png" href="./icons/icon-192.png">
+  <link rel="apple-touch-icon" href="./icons/icon-192.png">
+  <link rel="stylesheet" href="./style.css">
+  <title>LM GRE App • Vocabulary + Quant + Verbal</title>
+
+<style>
+/* Native details disclosure requires no JavaScript to open. */
+@media(max-width:800px){
+ .mobile-nav{overflow:visible!important;gap:0!important;justify-content:space-around!important}
+ .mobile-nav>button,.mobile-nav>.mobile-more-menu{flex:1 1 0!important;min-width:0!important}
+ .mobile-more-menu{position:relative;display:block;color:#9aabc1;font-size:10px;text-align:center}
+ .mobile-more-menu summary{display:flex;align-items:center;flex-direction:column;gap:1px;padding:5px 2px;cursor:pointer;list-style:none;user-select:none}
+ .mobile-more-menu summary::-webkit-details-marker{display:none}
+ .mobile-more-menu summary span{font-size:22px;line-height:1.2}
+ .mobile-more-menu[open] summary{color:#83e3bc}
+ .native-menu-options{position:fixed;bottom:calc(72px + env(safe-area-inset-bottom));left:10px;right:10px;z-index:100;max-height:70vh;overflow-y:auto;background:#172239;border:1px solid #526781;border-radius:16px;padding:12px;box-shadow:0 12px 45px #000c;display:flex;flex-direction:column;gap:7px;text-align:left}
+ .native-menu-options button{all:unset;box-sizing:border-box;display:block!important;text-align:left!important;border:1px solid #39495f!important;background:#253349!important;color:#e2ebf7!important;padding:13px 14px!important;border-radius:10px!important;font-family:inherit!important;font-size:14px!important;font-weight:700!important;cursor:pointer!important}
+}
+@media(min-width:801px){.mobile-more-menu{display:none}}
+</style>
+</head>
+<body>
+  <div id="toast" aria-live="polite" role="status"></div>
+  <div id="auth-screen" class="auth-screen">
+    <div class="auth-glow auth-glow-a"></div><div class="auth-glow auth-glow-b"></div>
+    <div class="auth-card">
+      <div class="brand-mark big-mark" aria-hidden="true">L<span>M</span><i>.</i></div>
+      <div class="eyebrow center">LM GRE APP · VOCABULARY + QUANT</div>
+      <h1>Conquer GRE<br><em>vocabulary & math.</em></h1>
+      <p>1,000 vocabulary words, deep-dive Quant chapters, exams and two-minute drills.</p>
+      <form id="auth-form">
+        <label for="passcode">ACCESS CODE</label>
+        <div class="pass-row"><input type="password" id="passcode" autocomplete="off" placeholder="Enter password" required><button class="btn primary" type="submit">Enter <span aria-hidden="true">↗</span></button></div>
+        <div id="auth-error" class="auth-error" aria-live="polite"></div>
+      </form>
+      <div class="auth-footer"><span class="dot-online"></span> Offline-ready · Saves on this device</div>
+    </div>
+  </div>
+  <div id="app-shell" class="shell" hidden>
+    <aside class="sidebar">
+      <div class="side-header"><div class="brand-mark">L<span>M</span><i>.</i></div><div><strong>LM GRE</strong><small>APP / 1,000 WORDS</small></div></div>
+      <div class="side-sub">YOUR TRAINING GROUND</div>
+      <nav id="side-nav" aria-label="Main navigation">
+        <button data-view="dashboard" class="nav-link"><span class="nav-icon">◈</span> Dashboard</button>
+        <button data-view="learn" class="nav-link"><span class="nav-icon">◩</span> Flashcards</button>
+        <button data-view="exam" class="nav-link"><span class="nav-icon">▦</span> Exam arena</button>
+        <button data-view="sprint" class="nav-link"><span class="nav-icon">ϟ</span> 2-min sprint</button>
+        <button data-view="quant" class="nav-link"><span class="nav-icon">∑</span> GRE Quant lab</button>
+        <button data-view="dtrap" class="nav-link"><span class="nav-icon">◇</span> The D Trap</button>
+        <button data-view="verbal" class="nav-link"><span class="nav-icon">≡</span> GRE Verbal lab</button>
+        <button data-view="fulltest" class="nav-link"><span class="nav-icon">◷</span> 4 Full GRE tests</button>
+        <button data-view="vault" class="nav-link"><span class="nav-icon">⌕</span> Word vault</button>
+        <button data-view="stats" class="nav-link"><span class="nav-icon">▥</span> Progress</button>
+        <button data-view="settings" class="nav-link"><span class="nav-icon">⚙</span> Settings</button>
+      </nav>
+      <div class="sidebar-bottom"><div class="mini-kicker">TOTAL CAMPAIGN</div><div class="sidebar-big"><span id="side-mastered">0</span><small> / 1,000 mastered</small></div><div class="progress-track"><div class="progress-fill" id="side-bar"></div></div><p>Every word is a small victory.</p></div>
+    </aside>
+    <div class="work-area">
+      <header class="topbar"><div class="topbar-breadcrumb"><span class="tiny-brand">LM.</span><span id="header-path">COMMAND CENTER</span></div><div class="topbar-right"><div class="topbar-chip">🔥 <span id="top-streak">0</span><span class="chip-desc">day streak</span></div><div class="topbar-chip xp-chip">✦ <span id="top-xp">0</span> XP</div><button id="lock-btn" class="icon-button" aria-label="Lock app" title="Lock app">⏻</button></div></header>
+      <main id="main" tabindex="-1"></main>
+      <footer class="app-footer">LM GRE APP <span>·</span> 1,000 PDF vocabulary words + 74 GRE Quant chapters <span>·</span> Your progress stays in this browser</footer>
+    </div>
+    <nav id="mobile-nav" class="mobile-nav" aria-label="Mobile navigation">
+      <button data-view="dashboard"><span>◈</span>Home</button><button data-view="learn"><span>◩</span>Learn</button><button data-view="exam"><span>▦</span>Exam</button><button data-view="sprint"><span>ϟ</span>Sprint</button><button data-view="quant"><span>∑</span>Quant</button>
+      <details id="mobile-more-menu" class="mobile-more-menu">
+        <summary><span aria-hidden="true">☰</span>More</summary>
+        <div class="native-menu-options" aria-label="More modules">
+          <button data-view="verbal">≡ &nbsp; GRE Verbal Lab</button>
+          <button data-view="dtrap">◇ &nbsp; The D Trap</button>
+          <button data-view="fulltest">◷ &nbsp; 4 Full GRE Tests</button>
+          <button data-view="vault">⌕ &nbsp; Word Vault</button>
+          <button data-view="stats">▥ &nbsp; Progress</button>
+          <button data-view="settings">⚙ &nbsp; Settings</button>
+        </div>
+      </details>
+    </nav>
+  </div>
+  <script src="./words.js"></script>
+  <script src="./quant-bank.js"></script>
+  <script src="./quant-format.js"></script>
+  <script src="./quant-visual.js"></script>
+  <script src="./quant.js"></script>
+  <script src="./d-trap.js"></script>
+  <script src="./exam-sim.js"></script>
+  <script src="./verbal-bank.js"></script>
+  <script src="./verbal.js"></script>
+  <script src="./app.js"></script>
+<script>document.querySelectorAll("#mobile-more-menu [data-view]").forEach(b=>b.addEventListener("click",()=>document.getElementById("mobile-more-menu").open=false));</script>
+</body>
+</html>
